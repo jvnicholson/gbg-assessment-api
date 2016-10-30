@@ -24,45 +24,52 @@ namespace GeneByGene.Api.Controllers
         // GET api/samples
         public IEnumerable<SampleDto> Get()
         {
-            var samples = getSamplesForRequest(Request);
             var users = _usersRepository.GetUsers();
             var statuses = _statusesRepository.GetStatuses();
-            var dtos = from s in samples
-                       join u in users on s.CreatedBy equals u.UserId
-                       join st in statuses on s.StatusId equals st.StatusId
-                       select new SampleDto
-                       {
-                           SampleId = s.SampleId,
-                           Barcode = s.Barcode,
-                           CreatedAt = s.CreatedAt,
-                           CreatedById = s.CreatedBy,
-                           CreatedByFirstName = u.FirstName,
-                           CreatedByLastName = u.LastName,
-                           StatusId = s.StatusId,
-                           Status = st.Status1
-                       };
+            var sampleDtos = from s in _samplesRepository.GetSamples()
+                             join u in users on s.CreatedBy equals u.UserId
+                             join st in statuses on s.StatusId equals st.StatusId
+                             select new SampleDto
+                             {
+                                 SampleId = s.SampleId,
+                                 Barcode = s.Barcode,
+                                 CreatedAt = s.CreatedAt,
+                                 CreatedById = s.CreatedBy,
+                                 CreatedByFirstName = u.FirstName,
+                                 CreatedByLastName = u.LastName,
+                                 StatusId = s.StatusId,
+                                 Status = st.Status1
+                             };
 
-            return dtos;
-        }
-
-        private IEnumerable<Sample> getSamplesForRequest(HttpRequestMessage req)
-        {
-            IEnumerable<Sample> samples = null;
-            var pairs = req.GetQueryNameValuePairs();
+            var pairs = Request.GetQueryNameValuePairs();
             if (pairs.Any())
             {
-                foreach (var kvp in pairs)
+                sampleDtos = filterSampleDtos(sampleDtos, pairs);
+            }
+
+            return sampleDtos;
+        }
+
+        private IEnumerable<SampleDto> filterSampleDtos(IEnumerable<SampleDto> samples, IEnumerable<KeyValuePair<string, string>> pairs)
+        {
+            foreach (var kvp in pairs)
+            {
+                if (kvp.Key == "statusId")
                 {
-                    if (kvp.Key == "statusId")
-                    {
-                        int statusId;
-                        if (int.TryParse(kvp.Value, out statusId))
-                            samples = _samplesRepository.GetSamples().Where(s => s.StatusId == statusId);
-                    }
+                    int statusId;
+                    if (int.TryParse(kvp.Value, out statusId))
+                        samples = samples.Where(s => s.StatusId == statusId);
+                }
+                if (kvp.Key == "createdBy" && !string.IsNullOrWhiteSpace(kvp.Value))
+                {
+                    var nameStr = kvp.Value.ToLower();
+                    samples =
+                        samples.Where(
+                            s => s.CreatedByFirstName.ToLower().Contains(nameStr) || s.CreatedByLastName.ToLower().Contains(nameStr));
                 }
             }
 
-            return samples ?? _samplesRepository.GetSamples();
+            return samples;
         }
 
         // GET api/samples/5
