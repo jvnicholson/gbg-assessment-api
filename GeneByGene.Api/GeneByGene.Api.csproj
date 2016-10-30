@@ -239,7 +239,6 @@
     <Content Include="Models\GbgAssessmentModel.edmx.diagram">
       <DependentUpon>GbgAssessmentModel.edmx</DependentUpon>
     </Content>
-    <None Include="Properties\PublishProfiles\GeneByGeneApi20161027095600 - Web Deploy.pubxml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -254,6 +253,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+    <None Include="Properties\PublishProfiles\gbg-assessment-jvn-api - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

@@ -8,7 +8,6 @@ using GeneByGene.Api.Repositories;
 
 namespace GeneByGene.Api.Controllers
 {
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class SamplesController : ApiController
     {
         private readonly ISamplesRepository _samplesRepository;

@@ -10,7 +10,6 @@ using GeneByGene.Api.Repositories;
 
 namespace GeneByGene.Api.Controllers
 {
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class StatusesController : ApiController
     {
         private readonly IStatusesRepository _statusesRepository;
