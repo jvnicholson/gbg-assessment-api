@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using GeneByGene.Api.Dtos;
 using GeneByGene.Api.Models;
 using GeneByGene.Api.Repositories;
@@ -24,25 +24,45 @@ namespace GeneByGene.Api.Controllers
         // GET api/samples
         public IEnumerable<SampleDto> Get()
         {
-            var samples = _samplesRepository.GetSamples();
+            var samples = getSamplesForRequest(Request);
             var users = _usersRepository.GetUsers();
             var statuses = _statusesRepository.GetStatuses();
             var dtos = from s in samples
-                join u in users on s.CreatedBy equals u.UserId
-                join st in statuses on s.StatusId equals st.StatusId
-                select new SampleDto
-                    {
-                        SampleId = s.SampleId,
-                        Barcode = s.Barcode,
-                        CreatedAt = s.CreatedAt,
-                        CreatedById = s.CreatedBy,
-                        CreatedByFirstName = u.FirstName,
-                        CreatedByLastName = u.LastName,
-                        StatusId = s.StatusId,
-                        Status = st.Status1
-                    };
+                       join u in users on s.CreatedBy equals u.UserId
+                       join st in statuses on s.StatusId equals st.StatusId
+                       select new SampleDto
+                       {
+                           SampleId = s.SampleId,
+                           Barcode = s.Barcode,
+                           CreatedAt = s.CreatedAt,
+                           CreatedById = s.CreatedBy,
+                           CreatedByFirstName = u.FirstName,
+                           CreatedByLastName = u.LastName,
+                           StatusId = s.StatusId,
+                           Status = st.Status1
+                       };
 
             return dtos;
+        }
+
+        private IEnumerable<Sample> getSamplesForRequest(HttpRequestMessage req)
+        {
+            IEnumerable<Sample> samples = null;
+            var pairs = req.GetQueryNameValuePairs();
+            if (pairs.Any())
+            {
+                foreach (var kvp in pairs)
+                {
+                    if (kvp.Key == "statusId")
+                    {
+                        int statusId;
+                        if (int.TryParse(kvp.Value, out statusId))
+                            samples = _samplesRepository.GetSamples().Where(s => s.StatusId == statusId);
+                    }
+                }
+            }
+
+            return samples ?? _samplesRepository.GetSamples();
         }
 
         // GET api/samples/5
