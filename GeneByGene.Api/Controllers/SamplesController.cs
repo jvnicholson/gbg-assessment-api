@@ -92,11 +92,11 @@ namespace GeneByGene.Api.Controllers
                 }
                 if (sample.CreatedById < 0)
                 {
-                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "CreatedById must be greater than zero.");
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "CreatedById must be greater than or equal to zero.");
                 }
                 if (sample.StatusId < 0)
                 {
-                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "StatusId must be greater than zero.");
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "StatusId must be greater than or equal to zero.");
                 }
                 sample.CreatedAt = DateTime.Now;
                 sample.SampleId = _samplesRepository.Save(sample);

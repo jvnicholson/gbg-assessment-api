@@ -7,12 +7,12 @@ namespace GeneByGene.Api.Repositories
 {
     public interface ISamplesRepository
     {
-        IEnumerable<Sample> GetSamples();
+        List<Sample> GetSamples();
         int Save(SampleDto sample);
     }
     public class SamplesRepository : ISamplesRepository
     {
-        public IEnumerable<Sample> GetSamples()
+        public List<Sample> GetSamples()
         {
             using (var context = new Entities())
             {
