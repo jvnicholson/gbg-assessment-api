@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 using GeneByGene.Api.Dtos;
-using GeneByGene.Api.Models;
 using GeneByGene.Api.Repositories;
 
 namespace GeneByGene.Api.Controllers
