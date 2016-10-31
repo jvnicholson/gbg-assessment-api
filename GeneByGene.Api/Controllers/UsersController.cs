@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
-using GeneByGene.Api.Models;
 using GeneByGene.Api.Repositories;
 
 namespace GeneByGene.Api.Controllers
@@ -15,9 +16,17 @@ namespace GeneByGene.Api.Controllers
         }
 
         // GET api/users
-        public IEnumerable<User> Get()
+        public HttpResponseMessage Get()
         {
-            return _usersRepository.GetUsers();
+            try
+            {
+                var users = _usersRepository.GetUsers();
+                return Request.CreateResponse(HttpStatusCode.OK, users);
+            }
+            catch (Exception e)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, e.Message);
+            }
         }
     }
 }

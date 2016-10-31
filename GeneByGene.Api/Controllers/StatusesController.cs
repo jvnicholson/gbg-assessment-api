@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Cors;
-using GeneByGene.Api.Models;
 using GeneByGene.Api.Repositories;
 
 namespace GeneByGene.Api.Controllers
@@ -20,9 +16,17 @@ namespace GeneByGene.Api.Controllers
         }
 
         // GET api/statuses
-        public IEnumerable<Status> Get()
+        public HttpResponseMessage Get()
         {
-            return _statusesRepository.GetStatuses();
+            try
+            {
+                var statuses = _statusesRepository.GetStatuses();
+                return Request.CreateResponse(HttpStatusCode.OK, statuses);
+            }
+            catch (Exception e)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, e.Message);
+            }
         }
     }
 }
