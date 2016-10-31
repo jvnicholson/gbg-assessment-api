@@ -10,9 +10,9 @@ namespace GeneByGene.Api.Controllers
     {
         private readonly IUsersRepository _usersRepository;
 
-        public UsersController()
+        public UsersController(IUsersRepository userRepository)
         {
-            _usersRepository = new UsersRepository();
+            _usersRepository = userRepository;
         }
 
         // GET api/users

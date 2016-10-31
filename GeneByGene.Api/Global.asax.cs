@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Mvc;
-using System.Web.Optimization;
 using System.Web.Routing;
+using GeneByGene.Api.Repositories;
+using Microsoft.Practices.Unity;
 using Newtonsoft.Json.Serialization;
 
 namespace GeneByGene.Api
@@ -20,6 +17,21 @@ namespace GeneByGene.Api
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             HttpConfiguration config = GlobalConfiguration.Configuration;
+
+            Register(config);
+        }
+
+        public static void Register(HttpConfiguration config)
+        {
+            // Initialize DI
+            var container = new UnityContainer();
+            var hierarchicalLifetimeManager = new HierarchicalLifetimeManager();
+
+            container.RegisterType<IUsersRepository, UsersRepository>(hierarchicalLifetimeManager);
+
+            config.DependencyResolver = new UnityResolver(container);
+
+            // Set camelCase for JSON output
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             config.Formatters.JsonFormatter.UseDataContractJsonSerializer = false;
         }
