@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using GeneByGene.Api.Dtos;
@@ -21,32 +24,40 @@ namespace GeneByGene.Api.Controllers
         }
 
         // GET api/samples
-        public IEnumerable<SampleDto> Get()
+        public HttpResponseMessage Get()
         {
-            var users = _usersRepository.GetUsers();
-            var statuses = _statusesRepository.GetStatuses();
-            var sampleDtos = from s in _samplesRepository.GetSamples()
-                             join u in users on s.CreatedBy equals u.UserId
-                             join st in statuses on s.StatusId equals st.StatusId
-                             select new SampleDto
-                             {
-                                 SampleId = s.SampleId,
-                                 Barcode = s.Barcode,
-                                 CreatedAt = s.CreatedAt,
-                                 CreatedById = s.CreatedBy,
-                                 CreatedByFirstName = u.FirstName,
-                                 CreatedByLastName = u.LastName,
-                                 StatusId = s.StatusId,
-                                 Status = st.Status1
-                             };
-
-            var pairs = Request.GetQueryNameValuePairs();
-            if (pairs.Any())
+            try
             {
-                sampleDtos = filterSampleDtos(sampleDtos, pairs);
-            }
+                var users = _usersRepository.GetUsers();
+                var statuses = _statusesRepository.GetStatuses();
+                var sampleDtos = from s in _samplesRepository.GetSamples()
+                    join u in users on s.CreatedBy equals u.UserId
+                    join st in statuses on s.StatusId equals st.StatusId
+                    select new SampleDto
+                    {
+                        SampleId = s.SampleId,
+                        Barcode = s.Barcode,
+                        CreatedAt = s.CreatedAt,
+                        CreatedById = s.CreatedBy,
+                        CreatedByFirstName = u.FirstName,
+                        CreatedByLastName = u.LastName,
+                        StatusId = s.StatusId,
+                        Status = st.Status1
+                    };
 
-            return sampleDtos;
+                var pairs = Request.GetQueryNameValuePairs();
+                if (pairs.Any())
+                {
+                    sampleDtos = filterSampleDtos(sampleDtos, pairs);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, sampleDtos);
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
+                    "There was a problem getting you that data.");
+            }
         }
 
         private IEnumerable<SampleDto> filterSampleDtos(IEnumerable<SampleDto> samples, IEnumerable<KeyValuePair<string, string>> pairs)
@@ -71,25 +82,33 @@ namespace GeneByGene.Api.Controllers
             return samples;
         }
 
-        // GET api/samples/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/samples
-        public void Post([FromBody]string value)
+        public HttpResponseMessage Post([FromBody]SampleDto sample)
         {
-        }
+            try
+            {
+                if (string.IsNullOrEmpty(sample.Barcode))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Barcode is required.");
+                }
+                if (sample.CreatedById < 0)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "CreatedById must be greater than zero.");
+                }
+                if (sample.StatusId < 0)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "StatusId must be greater than zero.");
+                }
+                sample.CreatedAt = DateTime.Now;
+                sample.SampleId = _samplesRepository.Save(sample);
 
-        // PUT api/samples/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/samples/5
-        public void Delete(int id)
-        {
+                return Request.CreateResponse(HttpStatusCode.OK, sample);
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError,
+                    "There was a problem saving that Sample.");
+            }
         }
     }
 }
