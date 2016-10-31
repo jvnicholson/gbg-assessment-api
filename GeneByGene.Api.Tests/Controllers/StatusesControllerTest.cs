@@ -38,7 +38,7 @@ namespace GeneByGene.Api.Tests.Controllers
     {
         public IEnumerable<Status> GetStatuses()
         {
-            var status = new List<Status> {
+            var statuses = new List<Status> {
                 new Status {
                     StatusId = 0,
                     Status1 = "Received"
@@ -55,7 +55,7 @@ namespace GeneByGene.Api.Tests.Controllers
                     StatusId = 3,
                     Status1 = "Report Generation"
                 }};
-            return status;
+            return statuses;
         }
     }
 }

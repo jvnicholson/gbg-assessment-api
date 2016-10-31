@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -16,11 +15,11 @@ namespace GeneByGene.Api.Controllers
         private readonly IUsersRepository _usersRepository;
         private readonly IStatusesRepository _statusesRepository;
 
-        public SamplesController()
+        public SamplesController(IStatusesRepository statusesRepository, ISamplesRepository samplesRepository, IUsersRepository usersRepository)
         {
-            _samplesRepository = new SamplesRepository();
-            _usersRepository = new UsersRepository();
-            _statusesRepository = new StatusesRepository();
+            _samplesRepository = samplesRepository;
+            _usersRepository = usersRepository;
+            _statusesRepository = statusesRepository;
         }
 
         // GET api/samples
@@ -51,7 +50,7 @@ namespace GeneByGene.Api.Controllers
                     sampleDtos = filterSampleDtos(sampleDtos, pairs);
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, sampleDtos);
+                return Request.CreateResponse(HttpStatusCode.OK, sampleDtos.ToList());
             }
             catch (Exception e)
             {

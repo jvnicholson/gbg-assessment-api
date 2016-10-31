@@ -1,81 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Web.Http;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GeneByGene.Api;
 using GeneByGene.Api.Controllers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using GeneByGene.Api.Dtos;
+using GeneByGene.Api.Models;
+using GeneByGene.Api.Repositories;
 
 namespace GeneByGene.Api.Tests.Controllers
 {
     [TestClass]
     public class SamplesControllerTest
     {
-        /*[TestMethod]
-        public void Get()
+        [TestMethod]
+        public void GetSamples_ShouldReturnSampleDtos()
         {
             // Arrange
-            ValuesController controller = new ValuesController();
+            var statusesRepository = new MockStatusesRepository();
+            var usersRepository = new MockUsersRepository();
+            var samplesRepository = new MockSamplesRepository();
+            var controller = new SamplesController(statusesRepository, samplesRepository, usersRepository)
+            {
+                Request = new HttpRequestMessage(),
+                Configuration = new HttpConfiguration()
+            };
 
             // Act
-            IEnumerable<string> result = controller.Get();
+            var response = controller.Get();
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count());
-            Assert.AreEqual("value1", result.ElementAt(0));
-            Assert.AreEqual("value2", result.ElementAt(1));
+            Assert.IsNotNull(response);
+
+            List<SampleDto> samples;
+            Assert.IsTrue(response.TryGetContentValue(out samples));
+            Assert.AreEqual(samples.Count, 1);
+        }
+    }
+
+    public class MockSamplesRepository : ISamplesRepository
+    {
+        public IEnumerable<Sample> GetSamples()
+        {
+            var samples = new List<Sample> {
+                new Sample
+                {
+                    SampleId = 1,
+                    Barcode = "JVN001",
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = 0,
+                    StatusId = 0
+                } };
+            return samples;
         }
 
-        [TestMethod]
-        public void GetById()
+        public int Save(SampleDto sampleDto)
         {
-            // Arrange
-            ValuesController controller = new ValuesController();
-
-            // Act
-            string result = controller.Get(5);
-
-            // Assert
-            Assert.AreEqual("value", result);
+            return 0;
         }
-
-        [TestMethod]
-        public void Post()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
-
-            // Act
-            controller.Post("value");
-
-            // Assert
-        }
-
-        [TestMethod]
-        public void Put()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
-
-            // Act
-            controller.Put(5, "value");
-
-            // Assert
-        }
-
-        [TestMethod]
-        public void Delete()
-        {
-            // Arrange
-            ValuesController controller = new ValuesController();
-
-            // Act
-            controller.Delete(5);
-
-            // Assert
-        }*/
     }
 }

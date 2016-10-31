@@ -28,6 +28,7 @@ namespace GeneByGene.Api
 
             container.RegisterType<IUsersRepository, UsersRepository>(new HierarchicalLifetimeManager());
             container.RegisterType<IStatusesRepository, StatusesRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<ISamplesRepository, SamplesRepository>(new HierarchicalLifetimeManager());
 
             config.DependencyResolver = new UnityResolver(container);
 

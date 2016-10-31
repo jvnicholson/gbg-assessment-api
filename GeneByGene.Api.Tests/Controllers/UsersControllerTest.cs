@@ -40,7 +40,7 @@ namespace GeneByGene.Api.Tests.Controllers
         {
             var users = new List<User> {new User
                 {
-                    UserId = 100,
+                    UserId = 0,
                     FirstName = "Josh",
                     LastName = "Nicholson"
                 }};
