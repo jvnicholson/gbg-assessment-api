@@ -10,9 +10,9 @@ namespace GeneByGene.Api.Controllers
     {
         private readonly IStatusesRepository _statusesRepository;
 
-        public StatusesController()
+        public StatusesController(IStatusesRepository statusesRepository)
         {
-            _statusesRepository = new StatusesRepository();
+            _statusesRepository = statusesRepository;
         }
 
         // GET api/statuses

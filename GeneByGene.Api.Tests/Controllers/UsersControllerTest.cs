@@ -12,11 +12,11 @@ namespace GeneByGene.Api.Tests.Controllers
     public class UsersControllerTest
     {
         [TestMethod]
-        public void Get()
+        public void GetUsers_ShouldReturnUsers()
         {
             // Arrange
-            var userRepository = new MockUserRepository();
-            var controller = new UsersController(userRepository)
+            var usersRepository = new MockUsersRepository();
+            var controller = new UsersController(usersRepository)
             {
                 Request = new HttpRequestMessage(),
                 Configuration = new HttpConfiguration()
@@ -34,7 +34,7 @@ namespace GeneByGene.Api.Tests.Controllers
         }
     }
 
-    public class MockUserRepository : IUsersRepository
+    public class MockUsersRepository : IUsersRepository
     {
         public IEnumerable<User> GetUsers()
         {

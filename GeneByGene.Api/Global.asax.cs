@@ -25,9 +25,9 @@ namespace GeneByGene.Api
         {
             // Initialize DI
             var container = new UnityContainer();
-            var hierarchicalLifetimeManager = new HierarchicalLifetimeManager();
 
-            container.RegisterType<IUsersRepository, UsersRepository>(hierarchicalLifetimeManager);
+            container.RegisterType<IUsersRepository, UsersRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IStatusesRepository, StatusesRepository>(new HierarchicalLifetimeManager());
 
             config.DependencyResolver = new UnityResolver(container);
 
